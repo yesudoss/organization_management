@@ -5,8 +5,9 @@ import Tab from '@mui/material/Tab';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import MenuAppBar from './MenuAppBar';
-import { getUserData } from '../helper';
 import Organization from '../Organization/Organization';
+import UserProfile from '../Profile/UserProfile';
+import { getUserData } from '../Base/helper/helper';
 
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -44,6 +45,7 @@ function a11yProps(index) {
 export default function Home() {
   const userData = getUserData()
   const [value, setValue] = React.useState(0);
+  console.log(value)
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -54,20 +56,16 @@ export default function Home() {
       <MenuAppBar />
       <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
         <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
-          {userData?.is_superuser && <Tab label="Organizations" {...a11yProps(0)} />}
-          <Tab label="Item Two" {...a11yProps(1)} />
-          <Tab label="Item Three" {...a11yProps(2)} />
+        <Tab label="Profile" {...a11yProps(0)} />
+          {userData?.is_superuser && <Tab label="Organizations" {...a11yProps(1)} />}
         </Tabs>
       </Box>
       <CustomTabPanel value={value} index={0}>
+        <UserProfile />
+      </CustomTabPanel>
+      {userData?.is_superuser && <CustomTabPanel value={value} index={1}>
        <Organization />
-      </CustomTabPanel>
-      <CustomTabPanel value={value} index={1}>
-        Item Two
-      </CustomTabPanel>
-      <CustomTabPanel value={value} index={2}>
-        Item Three
-      </CustomTabPanel>
+      </CustomTabPanel>}
     </Box>
   );
 }

@@ -32,7 +32,8 @@ class CustomUser(AbstractUser):
     organization = models.ForeignKey(Organization, verbose_name=_("Organization"), null=True, blank=True,
                                      on_delete=models.CASCADE)
     mobile = models.CharField(_("Mobile Number"), max_length=20)
-    is_email_verified = models.BooleanField(default=False)
+    verification_code = models.CharField(_("Verification Code"), max_length=6, default="", null=True, blank=True)
+    is_verified = models.BooleanField(default=False)
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []

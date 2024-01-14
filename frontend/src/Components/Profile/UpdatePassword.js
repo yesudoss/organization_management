@@ -1,12 +1,10 @@
 import * as React from 'react';
-import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
 import Link from '@mui/material/Link';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import IconButton from '@mui/material/IconButton';
@@ -14,12 +12,10 @@ import InputAdornment from '@mui/material/InputAdornment';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import { useState } from "react";
-import { useEffect } from "react";
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import AxiosInstance from '../AxiosInstance';
+// import AxiosInstance from '../AxiosInstance';
 import { Alert, Autocomplete, Snackbar } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
-
+import AxiosInstance from '../../AxiosInstance';
 
 function Copyright(props) {
   return (
@@ -37,8 +33,7 @@ function Copyright(props) {
 
 const defaultTheme = createTheme();
 
-export default function SignUp() {
-  let navigate = useNavigate()
+export default function UpdatePassword() {
   const initialValues = {
     firstName: "",
     lastName: "",
@@ -65,37 +60,10 @@ export default function SignUp() {
     setOpen(false);
   };
 
-  useEffect(() => {
-    getOrg()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
 
   const validate = (fieldValues) => {
     const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+])[A-Za-z\d!@#$%^&*()_+]{8,}$/;
     let temp = { ...errors };
-
-    if ("firstName" in fieldValues) {
-      temp.firstName = fieldValues.firstName === "" ? "First Name is required" : "";
-    }
-    if ("lastName" in fieldValues) {
-      temp.lastName = fieldValues.lastName === "" ? "Last Name is required" : "";
-    }
-
-    if ("organization" in fieldValues) {
-      temp.organization = fieldValues.organization === "" ? "Organization Name is required" : "";
-    }
-
-    if ("email" in fieldValues) {
-      temp.email = fieldValues.email === "" ? "Email is required" : "";
-    }
-    if ("email" in fieldValues) {
-      temp.email =
-        fieldValues.email === ""
-          ? "Email ID is Required"
-          : /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(fieldValues.email)
-            ? ""
-            : "Invalid Email.";
-    }
 
     if ("password" in fieldValues) {
       temp.password = fieldValues.password === "" ? "Password is required" : "";
@@ -115,7 +83,6 @@ export default function SignUp() {
       }
     }
 
-
     setErrors({
       ...temp,
     });
@@ -125,24 +92,15 @@ export default function SignUp() {
   const handleSubmit = (event) => {
     event.preventDefault();
     if (validate(inputData)) {
-      console.log(inputData)
-      
-      AxiosInstance(`/register/`, {
+
+      AxiosInstance(`/updatePassword/`, {
         method: "POST",
         data: {
-          "first_name": inputData?.firstName,
-          "last_name": inputData?.lastName,
-          "email": inputData?.email,
           "password": inputData?.password,
-          "mobile": inputData?.mobile,
         }
       })
         .then((res) => {
-          setOpen(true)
-          setAlertType("success")
-          setMessage("You have registered successfully, An email has been sent to your registered email.")
-          setTimeout(()=>{navigate("/")}, 3000)
-          
+          console.log(res)
           
         }).catch(err => {
           console.log(err)
@@ -158,41 +116,20 @@ export default function SignUp() {
 
   };
 
-  const handleInputChange = (e, value) => {
-    // e.preventDefault();
-    if (e === "organization") {
-      if (value) {
-        setInputData({ ...inputData, "organization": value })
-      } else {
-        setInputData({ ...inputData, "organization": "" })
-      }
-    } else {
+  const handleInputChange = (e) => {
+    e.preventDefault();
       setInputData({
         ...inputData,
         [e?.target?.name]: e?.target?.value,
       });
-    }
-
+    
     Object.values?.(errors)?.find((res) => res !== "")?.length > 0 &&
-      validate({ ...inputData, [e?.target?.name]: e?.target?.value });
+      validate({ ...inputData, [e.target.name]: e.target.value });
   };
-
-  const getOrg = () => {
-    AxiosInstance(`/organization/`, {
-      method: "GET",
-    })
-      .then((res) => {
-        if (res?.data) setOrgData(res?.data)
-      }).catch(err => {
-        console.log(err)
-      })
-  }
-
-
 
   return (
     <ThemeProvider theme={defaultTheme}>
-      <Container component="main" maxWidth="xs">
+      <Container component="main">
         <CssBaseline />
         <Snackbar open={open} autoHideDuration={6000} onClose={handleClose} anchorOrigin={{ vertical: 'top', horizontal: 'right' }}>
         <Alert onClose={handleClose} severity={alertType} sx={{ width: '100%' }}>
@@ -201,102 +138,16 @@ export default function SignUp() {
       </Snackbar>
         <Box
           sx={{
-            marginTop: 8,
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
           }}
         >
-          <Avatar sx={{ m: 1, bgcolor: 'primary.main' }}>
-            <LockOutlinedIcon />
-          </Avatar>
           <Typography component="h1" variant="h5">
-            Sign up
+            Update Password
           </Typography>
           <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
             <Grid container spacing={2}>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  autoComplete="given-name"
-                  name="firstName"
-                  required
-                  fullWidth
-                  size="small"
-                  id="firstName"
-                  label="First Name"
-                  autoFocus
-                  onChange={handleInputChange}
-                  {...(errors.firstName && {
-                    error: true,
-                    helperText: errors.firstName,
-                  })}
-                />
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  fullWidth
-                  size="small"
-                  id="lastName"
-                  label="Last Name"
-                  name="lastName"
-                  autoComplete="family-name"
-                  onChange={handleInputChange}
-                  {...(errors.lastName && {
-                    error: true,
-                    helperText: errors.lastName,
-                  })}
-                />
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  fullWidth
-                  size="small"
-                  id="mobile"
-                  label="Mobile Number"
-                  name="mobile"
-                  onChange={handleInputChange}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <Autocomplete
-                isOptionEqualToValue={(option, value) =>
-                  +option.id === +value.id
-              }
-                  options={orgData || []}
-                  value={inputData?.organization}
-                  size="small"
-                  name="organization"
-                  getOptionLabel={(option) => option?.name || ""}
-                  onChange={(e, value) => handleInputChange("organization", value)}
-                  renderInput={(params) => <TextField
-                    {...params}
-                    required={true}
-                    label="Organization"
-                    {...(errors.organization && {
-                      error: true,
-                      helperText: errors.organization,
-                    })}
-                  />}
-                  
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  required
-                  fullWidth
-                  size="small"
-                  id="email"
-                  label="Email Address"
-                  name="email"
-                  autoComplete="email"
-                  onChange={handleInputChange}
-                  {...(errors.email && {
-                    error: true,
-                    helperText: errors.email,
-                  })}
-                />
-              </Grid>
-
               <Grid item xs={12}>
                 <TextField
                   size="small"
@@ -304,7 +155,6 @@ export default function SignUp() {
                   fullWidth
                   id="password"
                   onChange={handleInputChange}
-                  autoComplete="password"
                   label="Password"
                   type={showPassword ? "text" : "password"}
                   name="password"
@@ -377,15 +227,8 @@ export default function SignUp() {
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
             >
-              Sign Up
+              Update
             </Button>
-            <Grid container justifyContent="flex-end">
-              <Grid item>
-                <Link href="/" variant="body2">
-                  Already have an account? Sign in
-                </Link>
-              </Grid>
-            </Grid>
           </Box>
         </Box>
         <Copyright sx={{ mt: 5 }} />
