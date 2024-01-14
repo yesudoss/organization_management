@@ -8,6 +8,7 @@ import MenuAppBar from './MenuAppBar';
 import Organization from '../Organization/Organization';
 import UserProfile from '../Profile/UserProfile';
 import { getUserData } from '../Base/helper/helper';
+import UpdatePassword from '../Profile/UpdatePassword';
 
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -56,15 +57,19 @@ export default function Home() {
       <MenuAppBar />
       <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
         <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
-        <Tab label="Profile" {...a11yProps(0)} />
-          {userData?.is_superuser && <Tab label="Organizations" {...a11yProps(1)} />}
+          <Tab label="Profile" {...a11yProps(0)} />
+          <Tab label="Password Update" {...a11yProps(1)} />
+          {userData?.is_superuser && <Tab label="Organizations" {...a11yProps(2)} />}
         </Tabs>
       </Box>
       <CustomTabPanel value={value} index={0}>
         <UserProfile />
       </CustomTabPanel>
-      {userData?.is_superuser && <CustomTabPanel value={value} index={1}>
-       <Organization />
+      <CustomTabPanel value={value} index={1}>
+        <UpdatePassword />
+      </CustomTabPanel>
+      {userData?.is_superuser && <CustomTabPanel value={value} index={2}>
+        <Organization />
       </CustomTabPanel>}
     </Box>
   );

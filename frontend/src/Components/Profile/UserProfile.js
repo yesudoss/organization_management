@@ -45,27 +45,26 @@ export default function UserProfile() {
     };
 
     const [inputData, setInputData] = useState(initialValues);
-    console.log(inputData)
     const [errors, setErrors] = useState({});
     const [orgData, setOrgData] = useState([]);
 
     useEffect(() => {
         if (userData) {
-          setInputData({
-            // ...userData,
-            id: userData?.id,
-            first_name: userData?.first_name || "",
-            last_name: userData?.last_name || "",
-            website: userData?.website || "",
-            email: userData?.email,
-            mobile: userData?.mobile || "",
-            address: userData?.address || "",
-            organization: userData?.organization ? {id: userData?.organization, name: userData?.organization_name} : null,
-            description: userData?.description || ""
-          })
+            setInputData({
+                // ...userData,
+                id: userData?.id,
+                first_name: userData?.first_name || "",
+                last_name: userData?.last_name || "",
+                website: userData?.website || "",
+                email: userData?.email,
+                mobile: userData?.mobile || "",
+                address: userData?.address || "",
+                organization: userData?.organization ? { id: userData?.organization, name: userData?.organization_name } : null,
+                description: userData?.description || ""
+            })
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-      }, [])
+    }, [])
 
     // For Alert
     const [open, setOpen] = useState(false);
@@ -113,26 +112,6 @@ export default function UserProfile() {
         return Object.values(temp).every((x) => x === "");
     };
 
-    const fetchUserData = () =>{
-        AxiosInstance(`/register/${inputData?.id}/`, {
-            method: "GET",
-            
-        })
-            .then((res) => {
-                console.log(res)
-                // setMessage('Your Profile has been updated successfully!')
-                // setOpen(true)
-                // setAlertType('success')
-            }).catch(err => {
-                console.log(err)
-                setOpen(true)
-                setAlertType("error")
-                if (err?.response?.data?.email?.[0])
-                    setMessage(err?.response?.data?.email?.[0])
-                else
-                    setMessage("Unable to Update")
-            })
-    }
     const handleSubmit = async (event) => {
 
         // console.log(files?.[0]);
@@ -141,8 +120,6 @@ export default function UserProfile() {
 
         event.preventDefault();
         if (validate(inputData)) {
-            console.log(inputData)
-
             AxiosInstance(`/register/${inputData?.id}/`, {
                 method: "PUT",
                 data: {
@@ -155,7 +132,6 @@ export default function UserProfile() {
                 }
             })
                 .then((res) => {
-                    console.log(res?.data)
                     if (res?.data) addSessionData({ key: "userData", value: JSON.stringify(res?.data) });
                     setMessage('Your Profile has been updated successfully!')
                     setOpen(true)
@@ -247,11 +223,6 @@ export default function UserProfile() {
     files.map(file => (
         convertBase64(file)
     ))
-    // const handleSubmit = async () => {
-    //     console.log(files?.[0]);
-    //     let string = await convertBase64(files?.[0])
-    //     console.log(string);
-    // }
     const img = files.map(file => (
         <img style={{ borderRadius: "50%", padding: "2px" }} width="100%" height="100%" key={file.name} alt={file.name} className='single-file-image' src={URL.createObjectURL(file)} />
     ))
@@ -386,23 +357,12 @@ export default function UserProfile() {
                                     </Grid>
                                 </Grid>
                                 <Button
-                                    // onClick={handleSubmit}
-                                    onClick={fetchUserData}
-                                    fullWidth
-                                    variant="contained"
-                                    sx={{ mt: 3, mb: 2 }}
-                                >
-                                    Fetch
-                                </Button>
-
-                                <Button
                                     onClick={handleSubmit}
-                                    // onClick={fetchUserData}
                                     fullWidth
                                     variant="contained"
                                     sx={{ mt: 3, mb: 2 }}
                                 >
-                                Update
+                                    Update
                                 </Button>
                             </Box>
                         </Grid>

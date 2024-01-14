@@ -13,9 +13,9 @@ import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import { useState } from "react";
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-// import AxiosInstance from '../AxiosInstance';
 import { Alert, Autocomplete, Snackbar } from '@mui/material';
 import AxiosInstance from '../../AxiosInstance';
+import { getUserData } from '../Base/helper/helper';
 
 function Copyright(props) {
   return (
@@ -56,7 +56,6 @@ export default function UpdatePassword() {
     if (reason === 'clickaway') {
       return;
     }
-
     setOpen(false);
   };
 
@@ -93,23 +92,27 @@ export default function UpdatePassword() {
     event.preventDefault();
     if (validate(inputData)) {
 
-      AxiosInstance(`/updatePassword/`, {
+      AxiosInstance(`/update-password/`, {
         method: "POST",
         data: {
+          "email": getUserData()?.email,
           "password": inputData?.password,
         }
       })
         .then((res) => {
           console.log(res)
-          
+          setInputData(initialValues)
+          setOpen(true)
+          setAlertType("success")
+          setMessage("Your password has been updated successfully!")
         }).catch(err => {
           console.log(err)
           setOpen(true)
           setAlertType("error")
           if (err?.response?.data?.email?.[0])
-          setMessage(err?.response?.data?.email?.[0])
+            setMessage(err?.response?.data?.email?.[0])
           else
-          setMessage("Unable to register")
+            setMessage("Unable to register")
         })
 
     }
@@ -118,11 +121,11 @@ export default function UpdatePassword() {
 
   const handleInputChange = (e) => {
     e.preventDefault();
-      setInputData({
-        ...inputData,
-        [e?.target?.name]: e?.target?.value,
-      });
-    
+    setInputData({
+      ...inputData,
+      [e?.target?.name]: e?.target?.value,
+    });
+
     Object.values?.(errors)?.find((res) => res !== "")?.length > 0 &&
       validate({ ...inputData, [e.target.name]: e.target.value });
   };
@@ -132,10 +135,10 @@ export default function UpdatePassword() {
       <Container component="main">
         <CssBaseline />
         <Snackbar open={open} autoHideDuration={6000} onClose={handleClose} anchorOrigin={{ vertical: 'top', horizontal: 'right' }}>
-        <Alert onClose={handleClose} severity={alertType} sx={{ width: '100%' }}>
-          {message}
-        </Alert>
-      </Snackbar>
+          <Alert onClose={handleClose} severity={alertType} sx={{ width: '100%' }}>
+            {message}
+          </Alert>
+        </Snackbar>
         <Box
           sx={{
             display: 'flex',
@@ -153,6 +156,7 @@ export default function UpdatePassword() {
                   size="small"
                   required
                   fullWidth
+                  value={inputData?.password}
                   id="password"
                   onChange={handleInputChange}
                   label="Password"
@@ -188,6 +192,7 @@ export default function UpdatePassword() {
                 <TextField
                   size="small"
                   required
+                  value={inputData?.confirmPassword}
                   fullWidth
                   id="confirmPassword"
                   onChange={handleInputChange}
