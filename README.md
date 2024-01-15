@@ -20,7 +20,9 @@ cd backend
 
 #### Install the requirements
 Install the required Python packages:
-
+```
+pip install -r requirements.txt
+```
 # env configuration
 Create .env file inside the app folder and update the values
 ```
@@ -34,9 +36,7 @@ ALLOWED_HOSTS=['127.0.0.1','localhost']
 CORS_ALLOWED_ORIGINS=['http://127.0.0.1:3000','http://localhost:8000','http://localhost:3000']
 ```
 
-```
-pip install -r requirements.txt
-```
+
 
 #### Run migration
 Apply database migrations to set up the initial database schema:
