@@ -87,7 +87,8 @@ Start the ReactJS development server:
 npm start
 ```
 
-
+## NOTE
+Please make sure that backend is running on port 8000 and frontend is running on port 3000
 
 
 
