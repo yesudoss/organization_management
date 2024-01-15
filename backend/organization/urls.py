@@ -9,7 +9,6 @@ router.register(r'user', UserViewSet)
 router.register(r'organization', OrganizationViewSet)
 router.register(r'register', UserRegistrationViewSet, basename='user-registration')
 router.register(r'organization-private', OrganizationPrivateViewSet)
-# router.register(r'verify-access-code', VerifyAccessCodeView)
 
 urlpatterns = [
     path('token/', CustomTokenObtainPairView.as_view(), name='token_obtain_pair'),

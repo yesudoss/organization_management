@@ -80,6 +80,9 @@ export default function SignUp() {
     if ("lastName" in fieldValues) {
       temp.lastName = fieldValues.lastName === "" ? "Last Name is required" : "";
     }
+    if ("mobile" in fieldValues) {
+      temp.mobile = fieldValues.mobile === "" ? "Mobile is required" : "";
+    }
 
     if ("organization" in fieldValues) {
       temp.organization = fieldValues.organization === "" ? "Organization Name is required" : "";
@@ -126,7 +129,7 @@ export default function SignUp() {
     event.preventDefault();
     if (validate(inputData)) {
       console.log(inputData)
-      
+
       AxiosInstance(`/register/`, {
         method: "POST",
         data: {
@@ -135,23 +138,24 @@ export default function SignUp() {
           "email": inputData?.email,
           "password": inputData?.password,
           "mobile": inputData?.mobile,
+          "organization": inputData?.organization?.id
         }
       })
         .then((res) => {
           setOpen(true)
           setAlertType("success")
-          setMessage("You have registered successfully, An email has been sent to your registered email.")
-          setTimeout(()=>{navigate("/")}, 3000)
-          
-          
+          setMessage("You have registered successfully, An email has been sent to your registered email with secured access code. Please use that code for your account verification.")
+          setTimeout(() => { navigate("/") }, 3000)
+
+
         }).catch(err => {
           console.log(err)
           setOpen(true)
           setAlertType("error")
           if (err?.response?.data?.email?.[0])
-          setMessage(err?.response?.data?.email?.[0])
+            setMessage(err?.response?.data?.email?.[0])
           else
-          setMessage("Unable to register")
+            setMessage("Unable to register")
         })
 
     }
@@ -195,10 +199,10 @@ export default function SignUp() {
       <Container component="main" maxWidth="xs">
         <CssBaseline />
         <Snackbar open={open} autoHideDuration={6000} onClose={handleClose} anchorOrigin={{ vertical: 'top', horizontal: 'right' }}>
-        <Alert onClose={handleClose} severity={alertType} sx={{ width: '100%' }}>
-          {message}
-        </Alert>
-      </Snackbar>
+          <Alert onClose={handleClose} severity={alertType} sx={{ width: '100%' }}>
+            {message}
+          </Alert>
+        </Snackbar>
         <Box
           sx={{
             marginTop: 8,
@@ -215,9 +219,32 @@ export default function SignUp() {
           </Typography>
           <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
             <Grid container spacing={2}>
+              <Grid item xs={12}>
+                <Autocomplete
+                  isOptionEqualToValue={(option, value) =>
+                    +option.id === +value.id
+                  }
+                  options={orgData || []}
+                  value={inputData?.organization}
+                  size="small"
+                  name="organization"
+                  getOptionLabel={(option) => option?.name || ""}
+                  onChange={(e, value) => handleInputChange("organization", value)}
+                  renderInput={(params) => <TextField
+                    {...params}
+                    required={true}
+                    label="Organization"
+                    {...(errors.organization && {
+                      error: true,
+                      helperText: errors.organization,
+                    })}
+                  />}
+
+                />
+              </Grid>
               <Grid item xs={12} sm={6}>
                 <TextField
-                  autoComplete="given-name"
+                  autoComplete="first-name"
                   name="firstName"
                   required
                   fullWidth
@@ -235,6 +262,7 @@ export default function SignUp() {
               <Grid item xs={12} sm={6}>
                 <TextField
                   fullWidth
+                  required
                   size="small"
                   id="lastName"
                   label="Last Name"
@@ -247,39 +275,8 @@ export default function SignUp() {
                   })}
                 />
               </Grid>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  fullWidth
-                  size="small"
-                  id="mobile"
-                  label="Mobile Number"
-                  name="mobile"
-                  onChange={handleInputChange}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <Autocomplete
-                isOptionEqualToValue={(option, value) =>
-                  +option.id === +value.id
-              }
-                  options={orgData || []}
-                  value={inputData?.organization}
-                  size="small"
-                  name="organization"
-                  getOptionLabel={(option) => option?.name || ""}
-                  onChange={(e, value) => handleInputChange("organization", value)}
-                  renderInput={(params) => <TextField
-                    {...params}
-                    required={true}
-                    label="Organization"
-                    {...(errors.organization && {
-                      error: true,
-                      helperText: errors.organization,
-                    })}
-                  />}
-                  
-                />
-              </Grid>
+
+
               <Grid item xs={12}>
                 <TextField
                   required
@@ -293,6 +290,22 @@ export default function SignUp() {
                   {...(errors.email && {
                     error: true,
                     helperText: errors.email,
+                  })}
+                />
+              </Grid>
+
+              <Grid item xs={12} sm={12}>
+                <TextField
+                  fullWidth
+                  required
+                  size="small"
+                  id="mobile"
+                  label="Mobile Number"
+                  name="mobile"
+                  onChange={handleInputChange}
+                  {...(errors.mobile && {
+                    error: true,
+                    helperText: errors.mobile,
                   })}
                 />
               </Grid>

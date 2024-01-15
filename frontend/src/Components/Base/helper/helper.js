@@ -31,14 +31,9 @@ export const isAuthenticated = () => {
 export const signOut = () => {
     if (typeof window !== "undefined") {
       removeSessionData({ key: "isSignedIn" });
-    //   removeSessionData({ key: "is_ats_user" });
-    //   removeSessionData({ key: "selectedMenu" });
-    //   removeSessionData({ key: "theme" });
+      localStorage.removeItem("token", "");
       removeSessionData({ key: "userData" });
-    //   removeSessionData({ key: "userManagement" });
-    //   removeSessionData({ key: "AdminEmail" });
       removeSessionData({ key: "userid" });
-    //   history.push('/');
       return;
     }
   };

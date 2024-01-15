@@ -12,7 +12,7 @@ import { useState } from "react";
 import { useEffect } from "react";
 import { useDropzone } from 'react-dropzone'
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { Alert, Autocomplete, Paper, Snackbar } from '@mui/material';
+import { Alert, Autocomplete, Divider, Paper, Snackbar } from '@mui/material';
 import AxiosInstance from '../../AxiosInstance';
 import { addSessionData, getUserData } from '../Base/helper/helper';
 import "../css/styles.css"
@@ -41,13 +41,24 @@ export default function UserProfile() {
         last_name: "",
         email: "",
         mobile: "",
-        organization: ""
+        organization: "",
+        profile: ""
     };
 
     const [inputData, setInputData] = useState(initialValues);
     const [errors, setErrors] = useState({});
     const [orgData, setOrgData] = useState([]);
-
+    const [myOrgData, setMyOrgData] = useState([]);
+    const getMyPrg = (id) => {
+        AxiosInstance(`/organization/${id}/`, {
+            method: "GET",
+        })
+            .then((res) => {
+                if (res?.data) setMyOrgData(res?.data)
+            }).catch(err => {
+                console.log(err)
+            })
+    }
     useEffect(() => {
         if (userData) {
             setInputData({
@@ -60,8 +71,10 @@ export default function UserProfile() {
                 mobile: userData?.mobile || "",
                 address: userData?.address || "",
                 organization: userData?.organization ? { id: userData?.organization, name: userData?.organization_name } : null,
-                description: userData?.description || ""
+                description: userData?.description || "",
+                profile: userData?.profile || "",
             })
+            if (userData?.organization) getMyPrg(userData?.organization)
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
@@ -113,32 +126,31 @@ export default function UserProfile() {
     };
 
     const handleSubmit = async (event) => {
-
-        // console.log(files?.[0]);
-        // let string = await convertBase64(files?.[0])
-        // console.log(string);
-
+        let data = {
+            "first_name": inputData?.first_name,
+            "last_name": inputData?.last_name,
+            "email": inputData?.email,
+            "password": inputData?.password,
+            "mobile": inputData?.mobile,
+            "organization": inputData?.organization?.id || null
+        }
+        if (files?.[0]) {
+            let string = await convertBase64(files?.[0])
+            if (string)
+                data['profile_url'] = string
+        }
         event.preventDefault();
         if (validate(inputData)) {
             AxiosInstance(`/register/${inputData?.id}/`, {
                 method: "PUT",
-                data: {
-                    "first_name": inputData?.first_name,
-                    "last_name": inputData?.last_name,
-                    "email": inputData?.email,
-                    "password": inputData?.password,
-                    "mobile": inputData?.mobile,
-                    "organization": inputData?.organization?.id || null
-                }
+                data: data
             })
                 .then((res) => {
                     if (res?.data) addSessionData({ key: "userData", value: JSON.stringify(res?.data) });
                     setMessage('Your Profile has been updated successfully!')
                     setOpen(true)
                     setAlertType('success')
-
-
-
+                    if (inputData?.organization?.id) getMyPrg(inputData?.organization?.id)
                 }).catch(err => {
                     console.log(err)
                     setOpen(true)
@@ -148,9 +160,7 @@ export default function UserProfile() {
                     else
                         setMessage("Unable to Update")
                 })
-
         }
-
     };
 
     const handleInputChange = (e, value) => {
@@ -186,10 +196,7 @@ export default function UserProfile() {
 
     //   -------------------
 
-    // ** State
     const [files, setFiles] = useState([])
-
-    // ** Hook
     const { getRootProps, getInputProps } = useDropzone({
         disabled: false,
         multiple: false,
@@ -230,7 +237,7 @@ export default function UserProfile() {
 
     return (
         <ThemeProvider theme={defaultTheme}>
-            <Container component="main">
+            <div component="main">
                 <CssBaseline />
                 <Snackbar open={open} autoHideDuration={6000} onClose={handleClose} anchorOrigin={{ vertical: 'top', horizontal: 'right' }}>
                     <Alert onClose={handleClose} severity={alertType} sx={{ width: '100%' }}>
@@ -244,14 +251,12 @@ export default function UserProfile() {
                         alignItems: 'center',
                     }}
                 >
-
                     <Typography component="h1" variant="h5">
                         Profile Update
                     </Typography>
 
-
                     <Grid container>
-                        <Grid item xs={12} md={4} sx={{ paddingRight: "1.5rem", marginTop: "1.5rem" }}>
+                        <Grid item xs={12} md={3} sx={{ paddingRight: "1.5rem", marginTop: "1.5rem" }}>
                             <Box>
                                 <Paper sx={{ padding: "80px 24px 40px", borderRadius: "16px" }}>
 
@@ -259,7 +264,9 @@ export default function UserProfile() {
                                         <input {...getInputProps()} />
                                         <div className='presentation'>
                                             <div className='placeholder'>
-                                                {files.length ? img :
+                                                {files.length ? img : userData?.profile ?
+                                                    <img style={{ borderRadius: "50%", padding: "2px" }} width="100%" height="100%" key="Prof" alt="profile" className='single-file-image' src={inputData?.profile} />
+                                                    :
                                                     <>
                                                         <AddPhotoAlternateIcon />
                                                         <Typography variant="caption" display="block" gutterBottom>
@@ -270,13 +277,13 @@ export default function UserProfile() {
                                             </div>
                                         </div>
                                         <Typography sx={{ margin: "16px auto 0px" }} variant='caption' className='content'>
-                                            Allowed *.jpeg, *.jpg, *.png, *.gif<br /> max size of 3.1 MB
+                                            Allowed *.jpeg, *.jpg, *.png, *.gif<br /> max size of 2 MB
                                         </Typography>
                                     </Box>
                                 </Paper>
                             </Box>
                         </Grid>
-                        <Grid item xs={12} md={8} sx={{ paddingRight: "1.5rem", marginTop: "1.5rem" }}>
+                        <Grid item xs={12} md={6} sx={{ paddingRight: "1.5rem", marginTop: "1.5rem" }}>
                             <Box sx={{ mt: 3 }}>
                                 <Grid container spacing={2}>
                                     <Grid item xs={12} sm={6}>
@@ -301,6 +308,7 @@ export default function UserProfile() {
                                         <TextField
                                             fullWidth
                                             value={inputData?.last_name}
+                                            required
                                             size="small"
                                             id="last_name"
                                             label="Last Name"
@@ -366,10 +374,72 @@ export default function UserProfile() {
                                 </Button>
                             </Box>
                         </Grid>
+                        <Grid item xs={12} md={0.5} sx={{ paddingRight: "1.5rem", marginTop: "1.5rem" }}>
+                            <Divider orientation="vertical" />
+                        </Grid>
+                        <Grid item xs={12} md={2.5} sx={{ paddingRight: "1.5rem", marginTop: "1.5rem" }}>
+                            <Typography>My Organization</Typography>
+                            <Box sx={{ mt: 3 }}>
+                                <Grid container spacing={2}>
+                                    <Grid item xs={12} sm={12}>
+                                        <TextField
+                                            autoComplete="organizationname"
+                                            name="orgname"
+                                            fullWidth
+                                            size="small"
+                                            value={myOrgData?.name || ""}
+                                            label="Organization Name"
+                                            disabled
+                                        />
+                                    </Grid>
+                                    <Grid item xs={12} sm={12}>
+                                        <TextField
+                                            name="website"
+                                            fullWidth
+                                            size="small"
+                                            value={myOrgData?.website || ""}
+                                            label="Website"
+                                            disabled
+                                        />
+                                    </Grid>
+                                    <Grid item xs={12} sm={12}>
+                                        <TextField
+                                            name="phone"
+                                            fullWidth
+                                            size="small"
+                                            value={myOrgData?.phone || ""}
+                                            label="Phone"
+                                            disabled
+                                        />
+                                    </Grid>
+                                    <Grid item xs={12} sm={12}>
+                                        <TextField
+                                            name="email"
+                                            fullWidth
+                                            size="small"
+                                            value={myOrgData?.email || ""}
+                                            label="Email"
+                                            disabled
+                                        />
+                                    </Grid>
+                                    <Grid item xs={12} sm={12}>
+                                        <TextField
+                                            name="orgtype"
+                                            fullWidth
+                                            size="small"
+                                            value={myOrgData?.org_type || ""}
+                                            label="Organization Type"
+                                            disabled
+                                        />
+                                    </Grid>
+                                </Grid>
+                            </Box>
+                        </Grid>
+
                     </Grid>
                 </Box>
                 <Copyright sx={{ mt: 5 }} />
-            </Container>
+            </div>
         </ThemeProvider>
     );
 }

@@ -250,6 +250,7 @@ export default function OrganizationForm({ currentData, gridMode, handleSetCurre
               <Grid item xs={6} sm={4}>
                 <TextField
                   fullWidth
+                  required
                   value={inputData?.phone}
                   size="small"
                   id="phone"

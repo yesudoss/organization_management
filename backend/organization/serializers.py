@@ -6,6 +6,9 @@ from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 import random
 from django.core.mail import send_mail
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from django.core.files.base import ContentFile
+import base64
+from django.conf import settings
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -34,16 +37,19 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
     last_name = serializers.CharField(max_length=50, required=False, allow_null=True)
     email = serializers.EmailField(required=True)
     mobile = serializers.CharField(max_length=25, required=False, allow_null=True)
+    profile_url = serializers.CharField(max_length=None, required=False)
 
     class Meta:
         model = CustomUser
         fields = '__all__'
 
     def update(self, instance, validated_data):
-        print(validated_data)
         if validated_data.get('email') and CustomUser.objects.filter(email=validated_data.get('email')).exclude(id=instance.id).exists():
             return serializers.ValidationError("Email already exists. Please use a different email.")
         direct_fields = ['first_name', 'last_name', 'email', 'mobile', 'organization']
+        if validated_data.get('profile_url'):
+            format, imgstr = str(validated_data.get('profile_url')).split(';base64,')
+            instance.profile = ContentFile(base64.b64decode(imgstr), name='profile.jpg')
         for df in direct_fields:
             if validated_data.get(df):
                 setattr(instance, df, validated_data[df])
@@ -58,10 +64,11 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
             last_name=validated_data['last_name'] if validated_data.get('last_name') else "",
             email=validated_data['email'],
             password=validated_data['password'],
+            organization=validated_data['organization'],
         )
         if validated_data.get('mobile'):
-            user.profile.mobile = validated_data['mobile']
-            user.save()
+            user.mobile = validated_data['mobile']
+        user.save()
         try:
             otp = random.randint(111111, 999999)
             setattr(user, 'verification_code',otp)
@@ -69,7 +76,7 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
             send_mail(
                 'Verify Your Email',
                 'Dear %s,  Please use %d number as your account verification code:' % (user.first_name, otp),
-                'yesudoss@dbcyelagiri.edu.in',
+                settings.DEFAULT_FROM_EMAIL,
                 [user.email],
                 fail_silently=False,
             )
@@ -83,5 +90,7 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
     def validate(self, attrs):
         data = super().validate(attrs)
         serializer = UserSerializer(self.user).data
+        if serializer.get('profile'):
+            serializer['profile'] = 'http://localhost:8000'+serializer['profile']
         data.update({'user': serializer})
         return data
