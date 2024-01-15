@@ -21,6 +21,18 @@ cd backend
 #### Install the requirements
 Install the required Python packages:
 
+# env configuration
+Create .env file inside the app folder and update the values
+```
+EMAIL_HOST='smtp.gmail.com'
+EMAIL_PORT=587
+EMAIL_USE_TLS=True
+EMAIL_HOST_USER=--email--
+EMAIL_HOST_PASSWORD=--password--
+DEFAULT_FROM_EMAIL=--email--
+ALLOWED_HOSTS=['127.0.0.1','localhost']
+CORS_ALLOWED_ORIGINS=['http://127.0.0.1:3000','http://localhost:8000','http://localhost:3000']
+```
 
 ```
 pip install -r requirements.txt
