@@ -19,6 +19,7 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import AxiosInstance from '../AxiosInstance';
 import { Alert, Autocomplete, Snackbar } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import LoadingButton from '@mui/lab/LoadingButton';
 
 
 function Copyright(props) {
@@ -53,6 +54,7 @@ export default function SignUp() {
   const [orgData, setOrgData] = useState([]);
   const [showPassword, setShowPassword] = React.useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = React.useState(false);
+  const [loading, setLoading] = React.useState(false);
   // For Alert
   const [open, setOpen] = useState(false);
   const [message, setMessage] = useState("")
@@ -128,7 +130,7 @@ export default function SignUp() {
   const handleSubmit = (event) => {
     event.preventDefault();
     if (validate(inputData)) {
-      console.log(inputData)
+      setLoading(true)
 
       AxiosInstance(`/register/`, {
         method: "POST",
@@ -142,6 +144,7 @@ export default function SignUp() {
         }
       })
         .then((res) => {
+          setLoading(false)
           setOpen(true)
           setAlertType("success")
           setMessage("You have registered successfully, An email has been sent to your registered email with secured access code. Please use that code for your account verification.")
@@ -150,10 +153,11 @@ export default function SignUp() {
 
         }).catch(err => {
           console.log(err)
+          setLoading(false)
           setOpen(true)
           setAlertType("error")
-          if (err?.response?.data?.email?.[0])
-            setMessage(err?.response?.data?.email?.[0])
+          if (err?.response?.data?.[0])
+            setMessage(err?.response?.data?.[0])
           else
             setMessage("Unable to register")
         })
@@ -384,14 +388,12 @@ export default function SignUp() {
                 />
               </Grid>
             </Grid>
-            <Button
-              type="submit"
+            <LoadingButton type="submit"
               fullWidth
               variant="contained"
-              sx={{ mt: 3, mb: 2 }}
-            >
+              sx={{ mt: 3, mb: 2 }} loading={loading}>
               Sign Up
-            </Button>
+            </LoadingButton>
             <Grid container justifyContent="flex-end">
               <Grid item>
                 <Link href="/" variant="body2">
