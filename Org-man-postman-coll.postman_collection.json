@@ -1,0 +1,228 @@
+{
+	"info": {
+		"_postman_id": "21b5f4c3-b5e9-4fd8-8fea-2e0e42c440dd",
+		"name": "Org-man-postman-coll",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "30991426",
+		"_collection_link": "https://universal-crater-537258.postman.co/workspace/Cristoplus~d37bb34b-ed5b-4172-858d-dbd823a452ec/collection/30991426-21b5f4c3-b5e9-4fd8-8fea-2e0e42c440dd?action=share&source=collection_link&creator=30991426"
+	},
+	"item": [
+		{
+			"name": "Generate Token",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"email\": \"yesudoss1999@gmail.com\",\r\n  \"password\": \"Yesu@123\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8000/api/token/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"token",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Verify Token",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"token\":\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzA1MjQ0MzQ4LCJpYXQiOjE3MDUyNDQwNDgsImp0aSI6Ijg3NDk0MTU4NGIxMTQ4MDhhMjM3YTMzNTI0NGVlYjYwIiwidXNlcl9pZCI6MX0.8JRJ08qZvjVvuj5AeGZSlfHrXA7AFM4u4zDuyxghR5c\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8000/api/token/verify/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"token",
+						"verify",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Profile",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"first_name\": \"Yesu\",\r\n  \"last_name\": \"Doss X\",\r\n  \"email\": \"yesudoss1999@gmail.com\",\r\n  \"mobile\": \"977777777777\",\r\n  \"organization\": 1,\r\n  \"profile_url\":\"data:image/jpeg;base64,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\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8000/api/register/2/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"register",
+						"2",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "New Request Copy",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzA1MjQ2NDc5LCJpYXQiOjE3MDUyNDYxNzksImp0aSI6Ijc5MGZjNWE0OWEyZDRkYzNiOTRiMGJhZmM1NWE5ZjI2IiwidXNlcl9pZCI6MX0.Lb7MVRRYuftZTZQflM05hfn9tkPqIJus5F8Wtv10pEU",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"first_name\": \"A\",\r\n    \"last_name\": null,\r\n    \"email\": \"admin@test.com\",\r\n    \"mobile\": \"2222222222\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8000/api/organization-private",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"organization-private"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Verify Access Code",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\": \"admin@test.com\",\r\n    \"access_code\": \"22222\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8000/api/verify-access-code/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"verify-access-code",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Password Update",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzA1MjU4NTg3LCJpYXQiOjE3MDUyNTgyODcsImp0aSI6IjViMzcyZGRkOWQ2NDQ5ZDU5OWI5MTMxMTU5ODhiYjVlIiwidXNlcl9pZCI6Mn0.95HqVoHYeERGbl2cLnMVAcVP0d64YoJ3sUa59cEilHw",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\": \"yesudoss1999@gmail.com\",\r\n    \"password\": \"Yesu@123\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8000/api/update-password/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"update-password",
+						""
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
